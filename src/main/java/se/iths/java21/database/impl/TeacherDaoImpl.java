@@ -30,7 +30,9 @@ public class TeacherDaoImpl implements TeacherDao {
     @Override
     public void delete(Teacher teacher) {
         em.getTransaction().begin();
-        teacher.getCourses().forEach(course -> course.getTeachers().remove(teacher));
+        List<Course> courses = teacher.getCourses();
+        courses.forEach(course -> course.getTeachers().remove(teacher));
+        courses.forEach(course -> em.merge(course));
         em.remove(teacher);
         em.getTransaction().commit();
     }

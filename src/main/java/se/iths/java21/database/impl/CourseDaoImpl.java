@@ -31,8 +31,12 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public void delete(Course course) {
         em.getTransaction().begin();
-        course.getProgram().getCourses().remove(course);
-        course.getTeachers().forEach(teacher -> teacher.getCourses().remove(course));
+        Program program = course.getProgram();
+        program.getCourses().remove(course);
+        em.merge(program);
+        List<Teacher> teachers = course.getTeachers();
+        teachers.forEach(teacher -> teacher.getCourses().remove(course));
+        teachers.forEach(teacher -> em.merge(teacher));
         em.remove(course);
         em.getTransaction().commit();
     }

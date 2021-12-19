@@ -30,7 +30,9 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     public void delete(Student student) {
         em.getTransaction().begin();
-        student.getProgram().getStudents().remove(student);
+        Program program = student.getProgram();
+        program.getStudents().remove(student);
+        em.merge(program);
         em.remove(student);
         em.getTransaction().commit();
     }

@@ -69,6 +69,11 @@ public class Teacher {
         course.getTeachers().add(this);
     }
 
+    public void deleteCourse(Course course) {
+        courses.remove(course);
+        course.getTeachers().remove(this);
+    }
+
     @Override
     public String toString() {
         return "Teacher{" +

@@ -41,7 +41,7 @@ public class TeacherCmds {
                              +--------+ +-----------+ +-----------+ +-----------+ +-------------+ +---------+
                 TEACHERS     | 1. Add | | 2. Update | | 3. Delete | | 4. Filter | | 5. Show All | | 0. Exit |
                              +--------+ +-----------+ +-----------+ +-----------+ +-------------+ +---------+
-                                
+                
                 Make your menu choice by writing the NUMBER and then press ENTER!
                 ↓ Write Here ↓""");
     }
@@ -83,10 +83,9 @@ public class TeacherCmds {
         System.out.println("Last name:");
         String lastName = InputHandler.getStringInput();
         System.out.println("Start of Employment (Date format " + new Date(System.currentTimeMillis()) + "):");
-        Date star_date = Date.valueOf(InputHandler.getStringInput());
+        Date start_date = Date.valueOf(InputHandler.getStringInput());
 
-        Teacher teacher = new Teacher(firstName, lastName, star_date);
-        teacherDao.insert(teacher);
+        Teacher teacher = new Teacher(firstName, lastName, start_date);
 
         System.out.println("\nAdd Teacher to a Course? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
@@ -94,7 +93,10 @@ public class TeacherCmds {
             Course course = courseDao.getByID(InputHandler.getIntegerInput());
 
             teacher.addCourse(course);
+            courseDao.update(course);
         }
+
+        teacherDao.insert(teacher);
 
         System.out.println("\nNew Teacher " + teacher + " added successfully!");
     }
@@ -108,6 +110,8 @@ public class TeacherCmds {
         System.out.println("\n" + teacher + " SELECTED!");
 
         updateMenuChoice(teacher);
+
+        teacherDao.update(teacher);
     }
 
     private void updateMenuChoice(Teacher teacher) {
@@ -186,11 +190,12 @@ public class TeacherCmds {
         do {
             input = InputHandler.getStringInput();
             if (input.equalsIgnoreCase("d")) {
-                teacher.getCourses().remove(course);
-                course.getTeachers().remove(teacher);
+                teacher.deleteCourse(course);
+                courseDao.update(course);
                 break;
             } else if (input.equalsIgnoreCase("a")) {
                 teacher.addCourse(course);
+                courseDao.update(course);
                 break;
             } else {
                 System.out.println("Invalid choice! Try again!");
