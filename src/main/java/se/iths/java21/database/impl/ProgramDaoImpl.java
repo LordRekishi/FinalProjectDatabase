@@ -31,8 +31,12 @@ public class ProgramDaoImpl implements ProgramDao {
     @Override
     public void delete(Program program) {
         em.getTransaction().begin();
-        program.getCourses().clear();
-        program.getStudents().clear();
+        List<Course> courses = program.getCourses();
+        courses.forEach(course -> course.setProgram(null));
+        courses.forEach(course -> em.merge(course));
+        List<Student> students = program.getStudents();
+        students.forEach(student -> student.setProgram(null));
+        students.forEach(student -> em.merge(student));
         em.remove(program);
         em.getTransaction().commit();
     }

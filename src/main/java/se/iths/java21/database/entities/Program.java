@@ -20,7 +20,8 @@ public class Program {
     private List<Course> courses = new ArrayList<>();
 
     @OneToMany
-    private List<Student> students = new ArrayList<>();;
+    private List<Student> students = new ArrayList<>();
+    ;
 
     public Program() {}
 
@@ -62,6 +63,11 @@ public class Program {
         course.setProgram(this);
     }
 
+    public void deleteCourse(Course course) {
+        courses.remove(course);
+        course.setProgram(null);
+    }
+
     public List<Student> getStudents() {
         return students;
     }
@@ -69,6 +75,11 @@ public class Program {
     public void addStudent(Student student) {
         students.add(student);
         student.setProgram(this);
+    }
+
+    public void deleteStudent(Student student) {
+        students.remove(student);
+        student.setProgram(null);
     }
 
     @Override

@@ -6,7 +6,6 @@ import se.iths.java21.database.dao.StudentDao;
 import se.iths.java21.database.entities.Course;
 import se.iths.java21.database.entities.Program;
 import se.iths.java21.database.entities.Student;
-import se.iths.java21.database.entities.Teacher;
 import se.iths.java21.database.impl.CourseDaoImpl;
 import se.iths.java21.database.impl.ProgramDaoImpl;
 import se.iths.java21.database.impl.StudentDaoImpl;
@@ -112,34 +111,40 @@ public class ProgramCmds {
         programDao.truncate();
     }
 
-    // NEEDS UPDATE BELOW!!
-
     private void add() {
         System.out.println("\n1. Adding new Program!");
 
         System.out.println("\nProgram name:");
         String name = InputHandler.getStringInput();
-        System.out.println("Start Date (Date format " + new Date(System.currentTimeMillis()) + "):");
+        System.out.println("\nStart Date (Date format " + new Date(System.currentTimeMillis()) + "):");
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
         Program program = new Program(name, start_date);
 
-        System.out.println("\nAdd Program to a Program? (Y/N)");
+        System.out.println("\nAdd Courses to Program? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
-            System.out.println("\nPlease enter ID of Program to add program to:");
-            Program program = programDao.getByID(InputHandler.getIntegerInput());
+            do {
+                System.out.println("\nPlease enter ID of Course to add:");
+                Course course = courseDao.getByID(InputHandler.getIntegerInput());
 
-            program.addProgram(program);
-            programDao.update(program);
+                program.addCourse(course);
+                courseDao.update(course);
+
+                System.out.println("\nAdd another Course? (Y/N)");
+            } while (!InputHandler.getStringInput().equalsIgnoreCase("n"));
         }
 
-        System.out.println("\nAdd a Teacher to this Program? (Y/N)");
+        System.out.println("\nAdd Students to Program? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
-            System.out.println("\nPlease enter ID of Teacher to add:");
-            Teacher teacher = teacherDao.getByID(InputHandler.getIntegerInput());
+            do {
+                System.out.println("\nPlease enter ID of Student to add:");
+                Student student = studentDao.getByID(InputHandler.getIntegerInput());
 
-            program.addTeacher(teacher);
-            teacherDao.update(teacher);
+                program.addStudent(student);
+                studentDao.update(student);
+
+                System.out.println("\nAdd another Student? (Y/N)");
+            } while (!InputHandler.getStringInput().equalsIgnoreCase("n"));
         }
 
         programDao.insert(program);
@@ -169,8 +174,8 @@ public class ProgramCmds {
                                         
                     1. Name
                     2. Start Date
-                    3. Program
-                    4. Teachers
+                    3. Courses
+                    4. Students
                     0. Back to menu
                                         
                     Make your menu choice by writing the NUMBER and then press ENTER!
@@ -180,8 +185,8 @@ public class ProgramCmds {
             switch (choice) {
                 case 1 -> updateName(program);
                 case 2 -> updateStartDate(program);
-                case 3 -> updateProgram(program);
-                case 4 -> updateTeachers(program);
+                case 3 -> updateCourses(program);
+                case 4 -> updateStudents(program);
                 case 0 -> System.out.println("\nReturning to menu...");
                 default -> System.out.println("\nInvalid choice, try again");
             }
@@ -202,7 +207,8 @@ public class ProgramCmds {
 
     private void updateStartDate(Program program) {
         System.out.println("\n2. Updating Start Date");
-        System.out.println("Program current Start Date: " + program.getStart_date().toString());
+
+        System.out.println("\nProgram current Start Date: " + program.getStart_date().toString());
 
         System.out.println("\nPlease enter new Start Date (Date format " + new Date(System.currentTimeMillis()) + "):");
         Date startDate = Date.valueOf(InputHandler.getStringInput());
@@ -211,39 +217,55 @@ public class ProgramCmds {
         updatedPrint(program);
     }
 
-    private void updateProgram(Program program) {
-        System.out.println("\n3. Updating Program");
-        System.out.println("Program current Program: " + program.getProgram().getName());
+    private void updateCourses(Program program) {
+        System.out.println("\n3. Updating Courses");
 
-        System.out.println("\nPlease enter ID of new Program:");
-        Program program = programDao.getByID(InputHandler.getIntegerInput());
+        System.out.println("\nProgram current Courses:");
+        program.getCourses().forEach(System.out::println);
 
-        program.addProgram(program);
-        programDao.update(program);
+        System.out.println("\nPlease enter ID of Course:");
+        Course course = courseDao.getByID(InputHandler.getIntegerInput());
+
+        System.out.println("\nDelete or Add selected Course? (D/A)");
+        String input;
+        do {
+            input = InputHandler.getStringInput();
+            if (input.equalsIgnoreCase("d")) {
+                program.deleteCourse(course);
+                courseDao.update(course);
+                break;
+            } else if (input.equalsIgnoreCase("a")) {
+                program.addCourse(course);
+                courseDao.update(course);
+                break;
+            } else {
+                System.out.println("Invalid choice! Try again!");
+            }
+        } while (true);
 
         updatedPrint(program);
     }
 
-    private void updateTeachers(Program program) {
-        System.out.println("\n4. Updating Teachers");
-        System.out.println("\nProgram current Teachers:");
-        program.getTeachers().forEach(System.out::println);
+    private void updateStudents(Program program) {
+        System.out.println("\n4. Updating Students");
 
-        System.out.println("\nPlease enter ID of Teacher:");
-        Teacher teacher = teacherDao.getByID(InputHandler.getIntegerInput());
+        System.out.println("\nProgram current Students:");
+        program.getStudents().forEach(System.out::println);
 
-        System.out.println("\nDelete or Add selected Teacher? (D/A)");
+        System.out.println("\nPlease enter ID of Student:");
+        Student student = studentDao.getByID(InputHandler.getIntegerInput());
+
+        System.out.println("\nDelete or Add selected Student? (D/A)");
         String input;
-
         do {
             input = InputHandler.getStringInput();
             if (input.equalsIgnoreCase("d")) {
-                program.deleteTeacher(teacher);
-                teacherDao.update(teacher);
+                program.deleteStudent(student);
+                studentDao.update(student);
                 break;
             } else if (input.equalsIgnoreCase("a")) {
-                program.addTeacher(teacher);
-                teacherDao.update(teacher);
+                program.addStudent(student);
+                studentDao.update(student);
                 break;
             } else {
                 System.out.println("Invalid choice! Try again!");
@@ -311,8 +333,8 @@ public class ProgramCmds {
                     1. ID
                     2. Name
                     3. Start Date
-                    4. Included in Program
-                    5. Taught by Teacher
+                    4. Courses
+                    5. Students
                     0. Back to menu
                                         
                     Make your menu choice by writing the NUMBER and then press ENTER!
@@ -323,8 +345,8 @@ public class ProgramCmds {
                 case 1 -> getByID();
                 case 2 -> getByName();
                 case 3 -> getByStartDate();
-                case 4 -> getByProgram();
-                case 5 -> getByTeacher();
+                case 4 -> getByCourse();
+                case 5 -> getByStudent();
                 case 0 -> System.out.println("\nReturning to menu...");
                 default -> System.out.println("\nInvalid choice, try again");
             }
@@ -365,22 +387,22 @@ public class ProgramCmds {
         }
     }
 
-    private void getByProgram() {
-        System.out.println("\nPlease enter ID of Program:");
+    private void getByCourse() {
+        System.out.println("\nPlease enter ID of Course:");
         int id = InputHandler.getIntegerInput();
-        Program program = programDao.getByID(id);
+        Course course = courseDao.getByID(id);
 
         System.out.println("\nResult:");
-        programDao.getByProgram(program).forEach(System.out::println);
+        System.out.println(programDao.getByCourse(course));
     }
 
-    private void getByTeacher() {
-        System.out.println("\nPlease enter ID of Teacher:");
+    private void getByStudent() {
+        System.out.println("\nPlease enter ID of Student:");
         int id = InputHandler.getIntegerInput();
-        Teacher teacher = teacherDao.getByID(id);
+        Student student = studentDao.getByID(id);
 
         System.out.println("\nResult:");
-        programDao.getByTeacher(teacher).forEach(System.out::println);
+        System.out.println(programDao.getByStudent(student));
     }
 
     private void showAll() {

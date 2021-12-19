@@ -41,7 +41,7 @@ public class TeacherCmds {
                              +--------+ +-----------+ +-----------+ +-----------+ +-------------+ +---------+
                 TEACHERS     | 1. Add | | 2. Update | | 3. Delete | | 4. Filter | | 5. Show All | | 0. Exit |
                              +--------+ +-----------+ +-----------+ +-----------+ +-------------+ +---------+
-                
+                                
                 Make your menu choice by writing the NUMBER and then press ENTER!
                 ↓ Write Here ↓""");
     }
@@ -80,9 +80,9 @@ public class TeacherCmds {
 
         System.out.println("\nFirst name:");
         String firstName = InputHandler.getStringInput();
-        System.out.println("Last name:");
+        System.out.println("\nLast name:");
         String lastName = InputHandler.getStringInput();
-        System.out.println("Start of Employment (Date format " + new Date(System.currentTimeMillis()) + "):");
+        System.out.println("\nStart of Employment (Date format " + new Date(System.currentTimeMillis()) + "):");
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
         Teacher teacher = new Teacher(firstName, lastName, start_date);

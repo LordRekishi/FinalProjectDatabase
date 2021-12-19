@@ -100,7 +100,7 @@ public class CourseCmds {
 
         System.out.println("\nCourse name:");
         String name = InputHandler.getStringInput();
-        System.out.println("Start Date (Date format " + new Date(System.currentTimeMillis()) + "):");
+        System.out.println("\nStart Date (Date format " + new Date(System.currentTimeMillis()) + "):");
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
         Course course = new Course(name, start_date);

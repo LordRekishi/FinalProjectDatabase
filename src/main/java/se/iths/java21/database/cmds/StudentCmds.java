@@ -84,11 +84,11 @@ public class StudentCmds {
 
         System.out.println("\nFirst name:");
         String firstName = InputHandler.getStringInput();
-        System.out.println("Last name:");
+        System.out.println("\nLast name:");
         String lastName = InputHandler.getStringInput();
-        System.out.println("Date of Birth (Date format " + new Date(System.currentTimeMillis()) + "):");
+        System.out.println("\nDate of Birth (Date format " + new Date(System.currentTimeMillis()) + "):");
         Date date_of_birth = Date.valueOf(InputHandler.getStringInput());
-        System.out.println("Active Student? (Y/N)");
+        System.out.println("\nActive Student? (Y/N)");
         boolean active = InputHandler.getStringInput().equalsIgnoreCase("y");
 
         Student newStudent = new Student(firstName, lastName, date_of_birth, active);

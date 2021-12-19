@@ -78,7 +78,8 @@ public class CourseDaoImpl implements CourseDao {
         TypedQuery<Course> query = em.createQuery("SELECT c FROM Course c WHERE start_date BETWEEN :min AND :max", Course.class);
         query.setParameter("min", min);
         query.setParameter("max", max);
-        return query.getResultList();    }
+        return query.getResultList();
+    }
 
     @Override
     public List<Course> getByStartDate(Date exactDate) {

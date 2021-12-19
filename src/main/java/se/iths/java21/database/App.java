@@ -61,5 +61,4 @@ public class App {
         courseCmds.insertDemoCourses();
         programCmds.insertDemoPrograms();
     }
-
 }
