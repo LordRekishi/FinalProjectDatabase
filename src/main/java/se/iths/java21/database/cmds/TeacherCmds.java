@@ -228,7 +228,7 @@ public class TeacherCmds {
 
         courseDao.getAll().stream()
                 .filter(course -> course.getTeachers().contains(teacherToDelete))
-                        .forEach(course -> course.deleteTeacher(teacherToDelete));
+                .forEach(course -> course.deleteTeacher(teacherToDelete));
 
         courseDao.getAll().forEach(courseDao::update);
 

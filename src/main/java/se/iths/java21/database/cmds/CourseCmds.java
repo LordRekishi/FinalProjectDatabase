@@ -150,7 +150,7 @@ public class CourseCmds {
 
         do {
             System.out.println("""
-                    
+                                        
                     What do you want to Update?
                                         
                     1. Name
@@ -265,7 +265,7 @@ public class CourseCmds {
         allCoursesPrint();
 
         System.out.println("""
-                
+                                
                 Please enter ID of Course to Delete:
                                 
                 !! WARNING THIS IS PERMANENT !!
@@ -290,7 +290,7 @@ public class CourseCmds {
 
         do {
             System.out.println("""
-                    
+                                        
                     Filter Courses by what?
                                         
                     1. ID

@@ -124,7 +124,7 @@ public class StudentCmds {
 
         do {
             System.out.println("""
-                    
+                                        
                     What do you want to Update?
                                         
                     1. First name
@@ -265,7 +265,7 @@ public class StudentCmds {
         allStudentsPrint();
 
         System.out.println("""
-                
+                                
                 Please enter ID of Student to Delete:
                                 
                 !! WARNING THIS IS PERMANENT !!
@@ -290,7 +290,7 @@ public class StudentCmds {
 
         do {
             System.out.println("""
-                    
+                                        
                     Filter students by what?
                                         
                     1. ID
