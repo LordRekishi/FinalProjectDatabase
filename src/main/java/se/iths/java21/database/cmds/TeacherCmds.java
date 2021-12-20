@@ -86,19 +86,20 @@ public class TeacherCmds {
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
         Teacher teacher = new Teacher(firstName, lastName, start_date);
+        teacherDao.insert(teacher);
 
         System.out.println("\nAdd Teacher to a Course? (Y/N)");
+        Course course;
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
             System.out.println("\nPlease enter ID of Course to add teacher to:");
-            Course course = courseDao.getByID(InputHandler.getIntegerInput());
+            course = courseDao.getByID(InputHandler.getIntegerInput());
 
             teacher.addCourse(course);
+            teacherDao.update(teacher);
             courseDao.update(course);
         }
 
-        teacherDao.insert(teacher);
-
-        System.out.println("\nNew Teacher " + teacher + " added successfully!");
+        System.out.println("\nNew Teacher added successfully!");
     }
 
     private void update() {

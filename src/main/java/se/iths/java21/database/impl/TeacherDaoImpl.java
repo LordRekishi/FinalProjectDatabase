@@ -30,11 +30,15 @@ public class TeacherDaoImpl implements TeacherDao {
     @Override
     public void delete(Teacher teacher) {
         em.getTransaction().begin();
-        List<Course> courses = teacher.getCourses();
-        courses.forEach(course -> course.getTeachers().remove(teacher));
-        courses.forEach(course -> em.merge(course));
-        em.remove(teacher);
-        em.getTransaction().commit();
+        try {
+            List<Course> courses = teacher.getCourses();
+            courses.forEach(course -> course.getTeachers().remove(teacher));
+            courses.forEach(course -> em.merge(course));
+        } catch (NullPointerException ignored) {
+        } finally {
+            em.remove(teacher);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
@@ -46,9 +50,16 @@ public class TeacherDaoImpl implements TeacherDao {
 
     @Override
     public void truncate() {
+//        em.getTransaction().begin();
+//        em.createNativeQuery("TRUNCATE TABLE Teacher").executeUpdate();
+//        em.createNativeQuery("ALTER TABLE Teacher AUTO_INCREMENT = 1").executeUpdate();
+//        em.getTransaction().commit();
+
         em.getTransaction().begin();
-        em.createQuery("DELETE FROM Teacher t").executeUpdate();
-        em.createNativeQuery("ALTER TABLE Teacher AUTO_INCREMENT = 1").executeUpdate();
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        List<Teacher> allTeachers = this.getAll();
+        allTeachers.forEach(this::delete);
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
         em.getTransaction().commit();
     }
 

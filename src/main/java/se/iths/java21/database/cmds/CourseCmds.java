@@ -67,28 +67,33 @@ public class CourseCmds {
     }
 
     public void insertDemoCourses() {
-        Course course1 = new Course("Java", Date.valueOf("2021-09-01"));
-        Course course2 = new Course("Database", Date.valueOf("2021-11-01"));
-        Course course3 = new Course("Sewing", Date.valueOf("2021-09-01"));
-        Course course4 = new Course("Knitting", Date.valueOf("2022-09-01"));
         Teacher teacher1 = teacherDao.getByID(1);
         Teacher teacher2 = teacherDao.getByID(2);
         Teacher teacher3 = teacherDao.getByID(3);
+
+        Course course1 = new Course("Java", Date.valueOf("2021-09-01"));
         course1.addTeacher(teacher1);
         course1.addTeacher(teacher2);
         course1.addTeacher(teacher3);
+        courseDao.insert(course1);
+
+        Course course2 = new Course("Database", Date.valueOf("2021-11-01"));
         course2.addTeacher(teacher2);
         course2.addTeacher(teacher3);
+        courseDao.insert(course2);
+
+        Course course3 = new Course("Sewing", Date.valueOf("2021-09-01"));
         course3.addTeacher(teacher1);
+        courseDao.insert(course3);
+
+        Course course4 = new Course("Knitting", Date.valueOf("2022-09-01"));
         course4.addTeacher(teacher1);
         course4.addTeacher(teacher3);
+        courseDao.insert(course4);
+
         teacherDao.update(teacher1);
         teacherDao.update(teacher2);
         teacherDao.update(teacher3);
-        courseDao.insert(course1);
-        courseDao.insert(course2);
-        courseDao.insert(course3);
-        courseDao.insert(course4);
     }
 
     public void truncateTable() {
@@ -104,6 +109,7 @@ public class CourseCmds {
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
         Course course = new Course(name, start_date);
+        courseDao.insert(course);
 
         System.out.println("\nAdd Course to a Program? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
@@ -122,10 +128,9 @@ public class CourseCmds {
             course.addTeacher(teacher);
             teacherDao.update(teacher);
         }
+        courseDao.update(course);
 
-        courseDao.insert(course);
-
-        System.out.println("\nNew Course " + course + " added successfully!");
+        System.out.println("\nNew Course added successfully!");
     }
 
     private void update() {

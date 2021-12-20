@@ -92,6 +92,7 @@ public class StudentCmds {
         boolean active = InputHandler.getStringInput().equalsIgnoreCase("y");
 
         Student newStudent = new Student(firstName, lastName, date_of_birth, active);
+        studentDao.insert(newStudent);
 
         System.out.println("\nAdd student to a Program? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
@@ -99,12 +100,11 @@ public class StudentCmds {
             Program program = programDao.getByID(InputHandler.getIntegerInput());
 
             program.addStudent(newStudent);
+            studentDao.update(newStudent);
             programDao.update(program);
         }
 
-        studentDao.insert(newStudent);
-
-        System.out.println("\nNew Student " + newStudent + " added successfully!");
+        System.out.println("\nNew Student added successfully!");
     }
 
     private void update() {

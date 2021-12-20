@@ -31,14 +31,18 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public void delete(Course course) {
         em.getTransaction().begin();
-        Program program = course.getProgram();
-        program.getCourses().remove(course);
-        em.merge(program);
-        List<Teacher> teachers = course.getTeachers();
-        teachers.forEach(teacher -> teacher.getCourses().remove(course));
-        teachers.forEach(teacher -> em.merge(teacher));
-        em.remove(course);
-        em.getTransaction().commit();
+        try {
+            Program program = course.getProgram();
+            program.getCourses().remove(course);
+            em.merge(program);
+            List<Teacher> teachers = course.getTeachers();
+            teachers.forEach(teacher -> teacher.getCourses().remove(course));
+            teachers.forEach(teacher -> em.merge(teacher));
+        } catch (NullPointerException ignored) {
+        } finally {
+            em.remove(course);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
@@ -50,9 +54,16 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public void truncate() {
+//        em.getTransaction().begin();
+//        em.createNativeQuery("TRUNCATE TABLE Course").executeUpdate();
+//        em.createNativeQuery("ALTER TABLE Course AUTO_INCREMENT = 1").executeUpdate();
+//        em.getTransaction().commit();
+
         em.getTransaction().begin();
-        em.createQuery("DELETE FROM Course c").executeUpdate();
-        em.createNativeQuery("ALTER TABLE Course AUTO_INCREMENT = 1").executeUpdate();
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        List<Course> allCourses = this.getAll();
+        allCourses.forEach(this::delete);
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
         em.getTransaction().commit();
     }
 

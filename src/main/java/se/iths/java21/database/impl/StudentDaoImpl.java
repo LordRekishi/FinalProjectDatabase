@@ -30,11 +30,15 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     public void delete(Student student) {
         em.getTransaction().begin();
-        Program program = student.getProgram();
-        program.getStudents().remove(student);
-        em.merge(program);
-        em.remove(student);
-        em.getTransaction().commit();
+        try {
+            Program program = student.getProgram();
+            program.getStudents().remove(student);
+            em.merge(program);
+        } catch (NullPointerException ignored) {
+        } finally {
+            em.remove(student);
+            em.getTransaction().commit();
+        }
     }
 
     @Override
@@ -46,9 +50,25 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public void truncate() {
+//        em.getTransaction().begin();
+//        em.createNativeQuery("DROP DATABASE FinalProject").executeUpdate();
+//        em.createNativeQuery("CREATE DATABASE FinalProject").executeUpdate();
+//        em.createNativeQuery("USE FinalProject").executeUpdate();
+
+//        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+//        em.createNativeQuery("TRUNCATE TABLE Student").executeUpdate();
+//        em.createNativeQuery("TRUNCATE TABLE TEACHER").executeUpdate();
+//        em.createNativeQuery("TRUNCATE TABLE COURSE").executeUpdate();
+//        em.createNativeQuery("TRUNCATE TABLE PROGRAM").executeUpdate();
+//        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+
+//        em.getTransaction().commit();
+
         em.getTransaction().begin();
-        em.createQuery("DELETE FROM Student s").executeUpdate();
-        em.createNativeQuery("ALTER TABLE Student AUTO_INCREMENT = 1").executeUpdate();
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        List<Student> allStudents = this.getAll();
+        allStudents.forEach(this::delete);
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
         em.getTransaction().commit();
     }
 

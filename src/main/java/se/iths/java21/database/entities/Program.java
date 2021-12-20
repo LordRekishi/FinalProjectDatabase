@@ -16,12 +16,11 @@ public class Program {
     private String name;
     private Date start_date;
 
-    @OneToMany
+    @OneToMany(targetEntity = Course.class)
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(targetEntity = Student.class)
     private List<Student> students = new ArrayList<>();
-    ;
 
     public Program() {}
 

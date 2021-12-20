@@ -67,9 +67,6 @@ public class ProgramCmds {
     }
 
     public void insertDemoPrograms() {
-        Program program1 = new Program("Java Programming", Date.valueOf("2021-09-01"));
-        Program program2 = new Program("Clothes design", Date.valueOf("2010-09-01"));
-
         Course course1 = courseDao.getByID(1);
         Course course2 = courseDao.getByID(2);
         Course course3 = courseDao.getByID(3);
@@ -81,16 +78,20 @@ public class ProgramCmds {
         Student student4 = studentDao.getByID(4);
         Student student5 = studentDao.getByID(5);
 
+        Program program1 = new Program("Java Programming", Date.valueOf("2021-09-01"));
         program1.addCourse(course1);
         program1.addCourse(course2);
-        program2.addCourse(course3);
-        program2.addCourse(course4);
-
         program1.addStudent(student1);
         program1.addStudent(student2);
         program1.addStudent(student3);
+        programDao.insert(program1);
+
+        Program program2 = new Program("Clothes design", Date.valueOf("2010-09-01"));
+        program2.addCourse(course3);
+        program2.addCourse(course4);
         program2.addStudent(student4);
         program2.addStudent(student5);
+        programDao.insert(program2);
 
         courseDao.update(course1);
         courseDao.update(course2);
@@ -102,9 +103,6 @@ public class ProgramCmds {
         studentDao.update(student3);
         studentDao.update(student4);
         studentDao.update(student5);
-
-        programDao.insert(program1);
-        programDao.insert(program2);
     }
 
     public void truncateTable() {
@@ -120,6 +118,7 @@ public class ProgramCmds {
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
         Program program = new Program(name, start_date);
+        programDao.insert(program);
 
         System.out.println("\nAdd Courses to Program? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
@@ -146,10 +145,9 @@ public class ProgramCmds {
                 System.out.println("\nAdd another Student? (Y/N)");
             } while (!InputHandler.getStringInput().equalsIgnoreCase("n"));
         }
+        programDao.update(program);
 
-        programDao.insert(program);
-
-        System.out.println("\nNew Program " + program + " added successfully!");
+        System.out.println("\nNew Program added successfully!");
     }
 
     private void update() {
