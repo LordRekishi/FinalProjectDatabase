@@ -10,6 +10,7 @@ import se.iths.java21.database.tools.Command;
 import se.iths.java21.database.tools.InputHandler;
 
 import java.sql.Date;
+import java.util.List;
 
 public class TeacherCmds {
     private final Command[] commands = new Command[6];
@@ -94,8 +95,7 @@ public class TeacherCmds {
             System.out.println("\nPlease enter ID of Course to add teacher to:");
             course = courseDao.getByID(InputHandler.getIntegerInput());
 
-            teacher.addCourse(course);
-            teacherDao.update(teacher);
+            course.addTeacher(teacher);
             courseDao.update(course);
         }
 
@@ -108,10 +108,9 @@ public class TeacherCmds {
         System.out.println("\nPlease enter Teacher ID:");
         Teacher teacher = teacherDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\n" + teacher + " SELECTED!");
+        System.out.println("\nSELECTED: " + teacher);
 
         updateMenuChoice(teacher);
-
         teacherDao.update(teacher);
     }
 
@@ -120,6 +119,7 @@ public class TeacherCmds {
 
         do {
             System.out.println("""
+                                        
                     What do you want to Update?
                                         
                     1. First name
@@ -179,23 +179,24 @@ public class TeacherCmds {
 
     private void updateCourses(Teacher teacher) {
         System.out.println("\n4. Updating Courses");
-        System.out.println("\nTeacher current Courses:");
-        teacher.getCourses().forEach(System.out::println);
 
         System.out.println("\nPlease enter ID of Course:");
         Course course = courseDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\nDelete or Add selected Course? (D/A)");
+        System.out.println("\nCourse current Teachers:");
+        course.getTeachers().forEach(System.out::println);
+
+        System.out.println("\nADD or DELETE selected Teacher from Course? (A/D)");
         String input;
 
         do {
             input = InputHandler.getStringInput();
             if (input.equalsIgnoreCase("d")) {
-                teacher.deleteCourse(course);
+                course.deleteTeacher(teacher);
                 courseDao.update(course);
                 break;
             } else if (input.equalsIgnoreCase("a")) {
-                teacher.addCourse(course);
+                course.addTeacher(teacher);
                 courseDao.update(course);
                 break;
             } else {
@@ -222,7 +223,15 @@ public class TeacherCmds {
             return;
         }
 
+
         Teacher teacherToDelete = teacherDao.getByID(id);
+
+        courseDao.getAll().stream()
+                .filter(course -> course.getTeachers().contains(teacherToDelete))
+                        .forEach(course -> course.deleteTeacher(teacherToDelete));
+
+        courseDao.getAll().forEach(courseDao::update);
+
         teacherDao.delete(teacherToDelete);
 
         deleteExitPrint();
@@ -235,6 +244,7 @@ public class TeacherCmds {
         allTeachersPrint();
 
         System.out.println("""
+                                
                 Please enter ID of Teacher to Delete:
                                 
                 !! WARNING THIS IS PERMANENT !!
@@ -259,12 +269,13 @@ public class TeacherCmds {
 
         do {
             System.out.println("""
+                                        
                     Filter Teachers by what?
                                         
                     1. ID
                     2. Name
                     3. Start of Employment
-                    4. Courses taught
+                    4. Course
                     0. Back to menu
                                         
                     Make your menu choice by writing the NUMBER and then press ENTER!

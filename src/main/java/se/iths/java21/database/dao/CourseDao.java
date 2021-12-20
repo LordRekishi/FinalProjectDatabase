@@ -10,6 +10,6 @@ import java.util.List;
 public interface CourseDao extends Dao<Course> {
     List<Course> getByStartDate(Date min, Date max);
     List<Course> getByStartDate(Date exactDate);
-    List<Course> getByTeacher(Teacher teacher);
     List<Course> getByProgram(Program program);
+    List<Course> getByTeacher(Teacher teacher);
 }

@@ -16,7 +16,7 @@ public class Student {
     private Date date_of_birth;
     private boolean active;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Program.class)
     private Program program;
 
     public Student() {}

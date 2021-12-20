@@ -31,18 +31,10 @@ public class ProgramDaoImpl implements ProgramDao {
     @Override
     public void delete(Program program) {
         em.getTransaction().begin();
-        try {
-            List<Course> courses = program.getCourses();
-            courses.forEach(course -> course.setProgram(null));
-            courses.forEach(course -> em.merge(course));
-            List<Student> students = program.getStudents();
-            students.forEach(student -> student.setProgram(null));
-            students.forEach(student -> em.merge(student));
-        } catch (NullPointerException ignored) {
-        } finally {
-            em.remove(program);
-            em.getTransaction().commit();
-        }
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        em.remove(program);
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        em.getTransaction().commit();
     }
 
     @Override
@@ -54,15 +46,9 @@ public class ProgramDaoImpl implements ProgramDao {
 
     @Override
     public void truncate() {
-//        em.getTransaction().begin();
-//        em.createNativeQuery("TRUNCATE TABLE Program").executeUpdate();
-//        em.createNativeQuery("ALTER TABLE Program AUTO_INCREMENT = 1").executeUpdate();
-//        em.getTransaction().commit();
-
         em.getTransaction().begin();
         em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-        List<Program> allPrograms = this.getAll();
-        allPrograms.forEach(this::delete);
+        em.createNativeQuery("TRUNCATE TABLE Program").executeUpdate();
         em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
         em.getTransaction().commit();
     }

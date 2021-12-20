@@ -3,8 +3,6 @@ package se.iths.java21.database.entities;
 import jakarta.persistence.*;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Teacher {
@@ -16,9 +14,6 @@ public class Teacher {
     private String first_name;
     private String last_name;
     private Date start_of_employment;
-
-    @ManyToMany(targetEntity = Course.class)
-    private List<Course> courses = new ArrayList<>();
 
     public Teacher() {}
 
@@ -60,20 +55,6 @@ public class Teacher {
         this.start_of_employment = start_of_employment;
     }
 
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void addCourse(Course course) {
-        courses.add(course);
-        course.getTeachers().add(this);
-    }
-
-    public void deleteCourse(Course course) {
-        courses.remove(course);
-        course.getTeachers().remove(this);
-    }
-
     @Override
     public String toString() {
         return "Teacher{" +
@@ -81,7 +62,6 @@ public class Teacher {
                 ", first_name='" + first_name + '\'' +
                 ", last_name='" + last_name + '\'' +
                 ", start_of_employment=" + start_of_employment +
-                ", courses=" + courses +
                 '}';
     }
 }

@@ -99,9 +99,8 @@ public class StudentCmds {
             System.out.println("\nPlease enter ID of Program to add student to:");
             Program program = programDao.getByID(InputHandler.getIntegerInput());
 
-            program.addStudent(newStudent);
+            newStudent.setProgram(program);
             studentDao.update(newStudent);
-            programDao.update(program);
         }
 
         System.out.println("\nNew Student added successfully!");
@@ -113,7 +112,7 @@ public class StudentCmds {
         System.out.println("\nPlease enter Student ID:");
         Student student = studentDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\n" + student + " SELECTED!");
+        System.out.println("\nSELECTED: " + student);
 
         updateMenuChoice(student);
 
@@ -125,6 +124,7 @@ public class StudentCmds {
 
         do {
             System.out.println("""
+                    
                     What do you want to Update?
                                         
                     1. First name
@@ -231,8 +231,7 @@ public class StudentCmds {
         System.out.println("\nPlease enter ID of new Program:");
         Program program = programDao.getByID(InputHandler.getIntegerInput());
 
-        program.addStudent(student);
-        programDao.update(program);
+        student.setProgram(program);
 
         updatedPrint(student);
     }
@@ -266,6 +265,7 @@ public class StudentCmds {
         allStudentsPrint();
 
         System.out.println("""
+                
                 Please enter ID of Student to Delete:
                                 
                 !! WARNING THIS IS PERMANENT !!
@@ -290,6 +290,7 @@ public class StudentCmds {
 
         do {
             System.out.println("""
+                    
                     Filter students by what?
                                         
                     1. ID

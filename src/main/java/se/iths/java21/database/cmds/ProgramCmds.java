@@ -13,6 +13,7 @@ import se.iths.java21.database.tools.Command;
 import se.iths.java21.database.tools.InputHandler;
 
 import java.sql.Date;
+import java.util.List;
 
 public class ProgramCmds {
     private final Command[] commands = new Command[6];
@@ -79,29 +80,29 @@ public class ProgramCmds {
         Student student5 = studentDao.getByID(5);
 
         Program program1 = new Program("Java Programming", Date.valueOf("2021-09-01"));
-        program1.addCourse(course1);
-        program1.addCourse(course2);
-        program1.addStudent(student1);
-        program1.addStudent(student2);
-        program1.addStudent(student3);
         programDao.insert(program1);
 
         Program program2 = new Program("Clothes design", Date.valueOf("2010-09-01"));
-        program2.addCourse(course3);
-        program2.addCourse(course4);
-        program2.addStudent(student4);
-        program2.addStudent(student5);
         programDao.insert(program2);
 
+        course1.setProgram(program1);
         courseDao.update(course1);
+        course2.setProgram(program1);
         courseDao.update(course2);
+        course3.setProgram(program2);
         courseDao.update(course3);
+        course4.setProgram(program2);
         courseDao.update(course4);
 
+        student1.setProgram(program1);
         studentDao.update(student1);
+        student2.setProgram(program1);
         studentDao.update(student2);
+        student3.setProgram(program1);
         studentDao.update(student3);
+        student4.setProgram(program2);
         studentDao.update(student4);
+        student5.setProgram(program2);
         studentDao.update(student5);
     }
 
@@ -126,7 +127,7 @@ public class ProgramCmds {
                 System.out.println("\nPlease enter ID of Course to add:");
                 Course course = courseDao.getByID(InputHandler.getIntegerInput());
 
-                program.addCourse(course);
+                course.setProgram(program);
                 courseDao.update(course);
 
                 System.out.println("\nAdd another Course? (Y/N)");
@@ -139,13 +140,12 @@ public class ProgramCmds {
                 System.out.println("\nPlease enter ID of Student to add:");
                 Student student = studentDao.getByID(InputHandler.getIntegerInput());
 
-                program.addStudent(student);
+                student.setProgram(program);
                 studentDao.update(student);
 
                 System.out.println("\nAdd another Student? (Y/N)");
             } while (!InputHandler.getStringInput().equalsIgnoreCase("n"));
         }
-        programDao.update(program);
 
         System.out.println("\nNew Program added successfully!");
     }
@@ -156,7 +156,7 @@ public class ProgramCmds {
         System.out.println("\nPlease enter Program ID:");
         Program program = programDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\n" + program + " SELECTED!");
+        System.out.println("\nSELECTED: " + program);
 
         updateMenuChoice(program);
 
@@ -168,6 +168,7 @@ public class ProgramCmds {
 
         do {
             System.out.println("""
+                                        
                     What do you want to Update?
                                         
                     1. Name
@@ -218,24 +219,33 @@ public class ProgramCmds {
     private void updateCourses(Program program) {
         System.out.println("\n3. Updating Courses");
 
-        System.out.println("\nProgram current Courses:");
-        program.getCourses().forEach(System.out::println);
+        System.out.println("\nCurrent Courses in Program");
+        List<Course> courses = courseDao.getByProgram(program);
+        courses.forEach(System.out::println);
 
         System.out.println("\nPlease enter ID of Course:");
         Course course = courseDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\nDelete or Add selected Course? (D/A)");
+        System.out.println("\nADD or DELETE selected Course? (A/D)");
         String input;
         do {
             input = InputHandler.getStringInput();
             if (input.equalsIgnoreCase("d")) {
-                program.deleteCourse(course);
-                courseDao.update(course);
-                break;
+                if (courses.contains(course)) {
+                    course.setProgram(null);
+                    courseDao.update(course);
+                    break;
+                } else {
+                    System.out.println("\nCan't find selected Course...");
+                }
             } else if (input.equalsIgnoreCase("a")) {
-                program.addCourse(course);
-                courseDao.update(course);
-                break;
+                if (!courses.contains(course)) {
+                    course.setProgram(program);
+                    courseDao.update(course);
+                    break;
+                } else {
+                    System.out.println("\nCan't add same Course twice...");
+                }
             } else {
                 System.out.println("Invalid choice! Try again!");
             }
@@ -248,23 +258,32 @@ public class ProgramCmds {
         System.out.println("\n4. Updating Students");
 
         System.out.println("\nProgram current Students:");
-        program.getStudents().forEach(System.out::println);
+        List<Student> students = studentDao.getByProgram(program);
+        students.forEach(System.out::println);
 
         System.out.println("\nPlease enter ID of Student:");
         Student student = studentDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\nDelete or Add selected Student? (D/A)");
+        System.out.println("\nADD or DELETE selected Student? (A/D)");
         String input;
         do {
             input = InputHandler.getStringInput();
             if (input.equalsIgnoreCase("d")) {
-                program.deleteStudent(student);
-                studentDao.update(student);
-                break;
+                if (students.contains(student)) {
+                    student.setProgram(null);
+                    studentDao.update(student);
+                    break;
+                } else {
+                    System.out.println("\nCan't find selected Student...");
+                }
             } else if (input.equalsIgnoreCase("a")) {
-                program.addStudent(student);
-                studentDao.update(student);
-                break;
+                if (!students.contains(student)) {
+                    student.setProgram(program);
+                    studentDao.update(student);
+                    break;
+                } else {
+                    System.out.println("\nCan't add same Student twice...");
+                }
             } else {
                 System.out.println("Invalid choice! Try again!");
             }
@@ -290,6 +309,19 @@ public class ProgramCmds {
         }
 
         Program programToDelete = programDao.getByID(id);
+
+        studentDao.getAll().stream()
+                .filter(student -> student.getProgram().equals(programToDelete))
+                .forEach(student -> student.setProgram(null));
+
+        studentDao.getAll().forEach(studentDao::update);
+
+        courseDao.getAll().stream()
+                .filter(course -> course.getProgram().equals(programToDelete))
+                .forEach(course -> course.setProgram(null));
+
+        courseDao.getAll().forEach(courseDao::update);
+
         programDao.delete(programToDelete);
 
         deleteExitPrint();
@@ -302,6 +334,7 @@ public class ProgramCmds {
         allProgramsPrint();
 
         System.out.println("""
+                                
                 Please enter ID of Program to Delete:
                                 
                 !! WARNING THIS IS PERMANENT !!
@@ -326,6 +359,7 @@ public class ProgramCmds {
 
         do {
             System.out.println("""
+                                        
                     Filter Programs by what?
                                         
                     1. ID

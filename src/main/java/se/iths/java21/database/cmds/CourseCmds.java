@@ -105,6 +105,7 @@ public class CourseCmds {
 
         System.out.println("\nCourse name:");
         String name = InputHandler.getStringInput();
+
         System.out.println("\nStart Date (Date format " + new Date(System.currentTimeMillis()) + "):");
         Date start_date = Date.valueOf(InputHandler.getStringInput());
 
@@ -113,11 +114,10 @@ public class CourseCmds {
 
         System.out.println("\nAdd Course to a Program? (Y/N)");
         if (InputHandler.getStringInput().equalsIgnoreCase("y")) {
-            System.out.println("\nPlease enter ID of Program to add course to:");
+            System.out.println("\nPlease enter ID of Program to add Course to:");
             Program program = programDao.getByID(InputHandler.getIntegerInput());
 
-            program.addCourse(course);
-            programDao.update(program);
+            course.setProgram(program);
         }
 
         System.out.println("\nAdd a Teacher to this Course? (Y/N)");
@@ -126,7 +126,6 @@ public class CourseCmds {
             Teacher teacher = teacherDao.getByID(InputHandler.getIntegerInput());
 
             course.addTeacher(teacher);
-            teacherDao.update(teacher);
         }
         courseDao.update(course);
 
@@ -139,7 +138,7 @@ public class CourseCmds {
         System.out.println("\nPlease enter Course ID:");
         Course course = courseDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\n" + course + " SELECTED!");
+        System.out.println("\nSELECTED: " + course);
 
         updateMenuChoice(course);
 
@@ -151,6 +150,7 @@ public class CourseCmds {
 
         do {
             System.out.println("""
+                    
                     What do you want to Update?
                                         
                     1. Name
@@ -204,8 +204,7 @@ public class CourseCmds {
         System.out.println("\nPlease enter ID of new Program:");
         Program program = programDao.getByID(InputHandler.getIntegerInput());
 
-        program.addCourse(course);
-        programDao.update(program);
+        course.setProgram(program);
 
         updatedPrint(course);
     }
@@ -218,18 +217,16 @@ public class CourseCmds {
         System.out.println("\nPlease enter ID of Teacher:");
         Teacher teacher = teacherDao.getByID(InputHandler.getIntegerInput());
 
-        System.out.println("\nDelete or Add selected Teacher? (D/A)");
+        System.out.println("\nDELETE or ADD selected Teacher? (D/A)");
         String input;
 
         do {
             input = InputHandler.getStringInput();
             if (input.equalsIgnoreCase("d")) {
                 course.deleteTeacher(teacher);
-                teacherDao.update(teacher);
                 break;
             } else if (input.equalsIgnoreCase("a")) {
                 course.addTeacher(teacher);
-                teacherDao.update(teacher);
                 break;
             } else {
                 System.out.println("Invalid choice! Try again!");
@@ -268,6 +265,7 @@ public class CourseCmds {
         allCoursesPrint();
 
         System.out.println("""
+                
                 Please enter ID of Course to Delete:
                                 
                 !! WARNING THIS IS PERMANENT !!
@@ -292,13 +290,14 @@ public class CourseCmds {
 
         do {
             System.out.println("""
+                    
                     Filter Courses by what?
                                         
                     1. ID
                     2. Name
                     3. Start Date
-                    4. Included in Program
-                    5. Taught by Teacher
+                    4. Program
+                    5. Teachers
                     0. Back to menu
                                         
                     Make your menu choice by writing the NUMBER and then press ENTER!
@@ -310,7 +309,7 @@ public class CourseCmds {
                 case 2 -> getByName();
                 case 3 -> getByStartDate();
                 case 4 -> getByProgram();
-                case 5 -> getByTeacher();
+                case 5 -> getByTeachers();
                 case 0 -> System.out.println("\nReturning to menu...");
                 default -> System.out.println("\nInvalid choice, try again");
             }
@@ -360,8 +359,8 @@ public class CourseCmds {
         courseDao.getByProgram(program).forEach(System.out::println);
     }
 
-    private void getByTeacher() {
-        System.out.println("\nPlease enter ID of Teacher:");
+    private void getByTeachers() {
+        System.out.println("\nPlease enter ID of Teacher");
         int id = InputHandler.getIntegerInput();
         Teacher teacher = teacherDao.getByID(id);
 

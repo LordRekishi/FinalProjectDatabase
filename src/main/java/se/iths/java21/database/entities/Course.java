@@ -16,7 +16,7 @@ public class Course {
     private String name;
     private Date start_date;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Program.class)
     private Program program;
 
     @ManyToMany(targetEntity = Teacher.class)
@@ -67,12 +67,10 @@ public class Course {
 
     public void addTeacher(Teacher teacher) {
         teachers.add(teacher);
-        teacher.getCourses().add(this);
     }
 
     public void deleteTeacher(Teacher teacher) {
         teachers.remove(teacher);
-        teacher.getCourses().remove(this);
     }
 
     @Override

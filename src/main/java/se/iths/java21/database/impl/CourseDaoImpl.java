@@ -31,18 +31,10 @@ public class CourseDaoImpl implements CourseDao {
     @Override
     public void delete(Course course) {
         em.getTransaction().begin();
-        try {
-            Program program = course.getProgram();
-            program.getCourses().remove(course);
-            em.merge(program);
-            List<Teacher> teachers = course.getTeachers();
-            teachers.forEach(teacher -> teacher.getCourses().remove(course));
-            teachers.forEach(teacher -> em.merge(teacher));
-        } catch (NullPointerException ignored) {
-        } finally {
-            em.remove(course);
-            em.getTransaction().commit();
-        }
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        em.remove(course);
+        em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        em.getTransaction().commit();
     }
 
     @Override
@@ -54,15 +46,9 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     public void truncate() {
-//        em.getTransaction().begin();
-//        em.createNativeQuery("TRUNCATE TABLE Course").executeUpdate();
-//        em.createNativeQuery("ALTER TABLE Course AUTO_INCREMENT = 1").executeUpdate();
-//        em.getTransaction().commit();
-
         em.getTransaction().begin();
         em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-        List<Course> allCourses = this.getAll();
-        allCourses.forEach(this::delete);
+        em.createNativeQuery("TRUNCATE TABLE Course").executeUpdate();
         em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
         em.getTransaction().commit();
     }
@@ -100,12 +86,16 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    public List<Course> getByTeacher(Teacher teacher) {
-        return teacher.getCourses().stream().toList();
+    public List<Course> getByProgram(Program program) {
+        TypedQuery<Course> query = em.createQuery("SELECT c FROM Course c WHERE program = :program", Course.class);
+        query.setParameter("program", program);
+        return query.getResultList();
     }
 
     @Override
-    public List<Course> getByProgram(Program program) {
-        return program.getCourses().stream().toList();
+    public List<Course> getByTeacher(Teacher teacher) {
+        TypedQuery<Course> query = em.createQuery("SELECT c FROM Course c WHERE teachers = :teacher", Course.class);
+        query.setParameter("teacher", teacher);
+        return query.getResultList();
     }
 }
